@@ -1,4 +1,4 @@
-ENTRY(main)
+ENTRY(Reset_Handler)
 
 MEMORY
 {
@@ -17,8 +17,23 @@ SECTIONS
         /* The whole interrupt table is 304 bytes long. */
         . = 304;
 
+        *(.text.startup)
         *(.text*)
+        *(.rodata*)
     } > FLASH = 0xFF
+
+    . = ALIGN(4);
+
+    _etext = .;
+    _sidata = _etext;
+
+    .data  : AT ( _sidata ) {
+        . = ALIGN(4);
+
+        _sdata = . ;
+        *(.data*)
+        _edata = . ;
+    } > RAM
 
     _end_of_ram = ORIGIN(RAM) + LENGTH(RAM); /* Define a symbol for the end of ram to be referenced in assembly */
 }
